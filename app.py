@@ -1,7 +1,9 @@
 
 import streamlit as st
-from dados import carregar_json
 from funcionarios import validar, pesquisar_funcionario, guardar_funcionario, alterar_funcionario, remover_funcionario
+from database import criar_tabela_funcionarios, listar_funcionarios
+
+criar_tabela_funcionarios()
 
 
 DEPARTAMENTOS = [
@@ -40,7 +42,11 @@ if "funcionarios" not  in st.session_state:
 
 
 if not st.session_state.funcionarios:
-    st.session_state.funcionarios = carregar_json()      
+    st.session_state.funcionarios =listar_funcionarios() 
+
+if "mensagem_sucesso" in st.session_state:
+    st.success(st.session_state.mensagem_sucesso)
+    del st.session_state.mensagem_sucesso        
 
 #Formulario      
 def mostrar_formulario():     
@@ -76,12 +82,12 @@ if botao:
 
     if valido:
         guardar_funcionario(
-            st.session_state.funcionarios,
             nome,
             departamento,
             idade,
             telefone
         )
+        st.session_state.funcionarios = listar_funcionarios()
         st.success(f"Funcionário {nome} registado com sucesso!")
         st.divider()
     else:
@@ -108,9 +114,10 @@ for indice, funcionario in enumerate(resultado_pesquisa):
      
      if remover:
       remover_funcionario(
-        st.session_state.funcionarios,
-        funcionario
+        funcionario ["id"],
     )
+      st.session_state.funcionarios = listar_funcionarios()
+      st.session_state.mensagem_sucesso = "Funcionario revomido com sucesso!"
       st.rerun()
 
 
@@ -130,7 +137,7 @@ def mostrar_funcionarios(funcionarios,pesquisa, resultado_pesquisa):
 mostrar_funcionarios(st.session_state.funcionarios, pesquisa, resultado_pesquisa)   
 if "funcionario_em_edicao" in st.session_state:
 
-     st.success("ENTREI NA ÁREA DE EDIÇÃO")
+     st.success("ÁREA DE EDIÇÃO")
 
      funcionario = st.session_state.funcionario_em_edicao
 
@@ -139,7 +146,7 @@ if "funcionario_em_edicao" in st.session_state:
 
      novo_nome = st.text_input(
         "Nome",
-        value=funcionario["nome"],
+        value=funcionario["nome"], 
         key="editar_nome"
     )
      
@@ -180,14 +187,16 @@ if "funcionario_em_edicao" in st.session_state:
 
       if valido:
          alterar_funcionario(
-            st.session_state.funcionarios,
-            funcionario,
+            funcionario["id"],
             novo_nome,
             nova_idade,
             novo_departamento,
             novo_telefone
         )
-         st.success("Funcionário alterado e guardado com sucesso!")
+         st.session_state.funcionarios = listar_funcionarios()
+         st.session_state.mensagem_sucesso = "Funcionário alterado e guardado com sucesso!"
+         st.rerun()
+         
          
       else:
         st.error(mensagem)

@@ -1,4 +1,5 @@
-from dados import guardar_json
+
+from database import inserir_funcionario, alterar_funcionario_db, remover_funcionario_db
 
 def validar(nome, idade, departamento, telefone):
     if not nome:
@@ -20,20 +21,11 @@ def pesquisar_funcionario(funcionarios, pesquisa):
    if pesquisa.lower() in funcionario["nome"].lower():
       resultado_pesquisa.append(funcionario)
  return  resultado_pesquisa 
-def guardar_funcionario(funcionarios, nome, departamento, idade, telefone):
-    funcionario = {
-        "nome": nome,
-        "departamento": departamento,
-        "idade": idade,
-        "telefone": telefone
-    }
-
-    funcionarios.append(funcionario)
-    guardar_json(funcionarios)
+def guardar_funcionario( nome, departamento, idade, telefone):
+    inserir_funcionario(nome, idade, departamento, telefone)
 
 def alterar_funcionario(
-     funcionarios,
-     funcionario,
+     id_funcionario,
      novo_nome,
      nova_idade,
      novo_departamento,
@@ -41,17 +33,16 @@ def alterar_funcionario(
 ):
       
 
-      funcionario["nome"] = novo_nome
-      funcionario["idade"] = nova_idade
-      funcionario["departamento"] = novo_departamento
-      funcionario["telefone"] = novo_telefone
+      alterar_funcionario_db(
+          id_funcionario, 
+          novo_nome, 
+          nova_idade, 
+          novo_departamento, 
+          novo_telefone
+)
 
-       
-
-      guardar_json(funcionarios )
-
-def remover_funcionario(funcionarios, funcionario):
-    funcionarios.remove(funcionario)
-    guardar_json(funcionarios)      
+def remover_funcionario(id_funcionario):
+    remover_funcionario_db(id_funcionario)
+      
 
 
