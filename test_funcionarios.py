@@ -15,61 +15,39 @@ funcionarios = [
 ]
 resultado = pesquisar_funcionario (funcionarios,"CAR")
 assert resultado == [{"nome": "Carla"},{"nome": "Carlos"}]
-funcionarios = []
-with patch ("funcionarios.guardar_json") as mock_guardar: 
- guardar_funcionario (funcionarios, "joão", "receção", 30, "912345678")
- mock_guardar.assert_called_once_with(funcionarios)
-assert funcionarios ==[{ "nome":"joão", "departamento":"receção","idade": 30,"telefone": "912345678"}]
+
+with patch ("funcionarios.inserir_funcionario") as mock_inserir: 
+ guardar_funcionario ( "joão", "receção", 30, "912345678")
+ mock_inserir.assert_called_once_with(
+  "joão",
+  30,
+  "receção",
+  "912345678"
+ )
 
 
-funcionarios = [
-    {"nome": "Carla"},
-    {"nome": "Maria"},
-    {"nome": "Carlos"}
-]
-with patch ("funcionarios.guardar_json") as mock_guardar: 
- remover_funcionario (funcionarios,{"nome": "Maria"})
- mock_guardar.assert_called_once_with(funcionarios)
-assert funcionarios ==[{ "nome":"Carla"}, {"nome": "Carlos"}]
 
-funcionarios = [
-    {
-        "nome": "Carla",
-        "idade": 28,
-        "departamento": "Receção",
-        "telefone": "912345678"
-    },
-    {
-        "nome": "Maria",
-        "idade": 31,
-        "departamento": "Cozinha",
-        "telefone": "923456789"
-    }
-]
-funcionario= funcionarios [0]
-with patch ("funcionarios.guardar_json") as mock_guardar:
+with patch ("funcionarios.remover_funcionario_db") as mock_remover: 
+ remover_funcionario (1)
+ mock_remover.assert_called_once_with(1)
+
+
+
+with patch ("funcionarios.alterar_funcionario_db") as mock_alterar:
  alterar_funcionario(
-    funcionarios,
-    funcionario,
+    1,
     "Carla Silva",
     29,
     "Receção",
     "999999999"
 )
-mock_guardar.assert_called_once_with(funcionarios)
-assert funcionarios == [
-    {
-        "nome": "Carla Silva",
-        "idade": 29,
-        "departamento": "Receção",
-        "telefone": "999999999"
-    },
-    {
-        "nome": "Maria",
-        "idade": 31,
-        "departamento": "Cozinha",
-        "telefone": "923456789"
-    }
-]
+mock_alterar.assert_called_once_with(
+     1,
+     "Carla Silva",
+     29,
+     "Receção",
+     "999999999"
+)
+
 
     
