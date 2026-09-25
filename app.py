@@ -46,25 +46,36 @@ if not st.session_state.funcionarios:
 
 if "mensagem_sucesso" in st.session_state:
     st.success(st.session_state.mensagem_sucesso)
-    del st.session_state.mensagem_sucesso        
+    del st.session_state.mensagem_sucesso    
+
+if "limpar_formulario" in st.session_state:
+    st.session_state.cadastro_nome = ""
+    st.session_state.cadastro_departamento = "Selecione um Departamento"
+    st.session_state.cadastro_idade = 0
+    st.session_state.cadastro_telefone = ""
+    del st.session_state.limpar_formulario
 
 #Formulario      
 def mostrar_formulario():     
  st.title("Formulário ")
  col1, col2 =st.columns(2) 
  with col1:
-  nome= st.text_input("Escreva o nome do Funcionario")
+  nome= st.text_input("Escreva o nome do Funcionario",
+    key = "cadastro_nome")
   departamento = st.selectbox(
     "Departamento",
-    ["Selecione um Departamento"] + DEPARTAMENTOS
+    ["Selecione um Departamento"] + DEPARTAMENTOS,
+    key = "cadastro_departamento"
 )
  with col2:
   idade = st.number_input(
     "Idade",
     min_value=0,
     step=1,
-    format="%d")
-  telefone= st.text_input("Telefone") 
+    format="%d",
+    key = "cadastro_idade")
+  telefone= st.text_input("Telefone",
+   key="cadastro_telefone") 
  botao=st.button("Guardar")
  return nome,departamento, idade, telefone, botao
 nome, departamento, idade, telefone, botao = mostrar_formulario()
@@ -88,8 +99,10 @@ if botao:
             telefone
         )
         st.session_state.funcionarios = listar_funcionarios()
-        st.success(f"Funcionário {nome} registado com sucesso!")
-        st.divider()
+        st.session_state.limpar_formulario=True
+        st.session_state.mensagem_sucesso = f"Funcionário {nome} registado com sucesso!"
+        st.rerun()
+        
     else:
         st.error(mensagem)
 
